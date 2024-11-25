@@ -2,8 +2,10 @@ import gradio as gr
 import torch
 import torchaudio
 
+print("Loading Resemble Enhance")
 from resemble_enhance.enhancer.inference import denoise, enhance
 
+print("Checking CUDA availability")
 if torch.cuda.is_available():
     device = "cuda"
 else:
@@ -31,6 +33,7 @@ def _fn(path, solver, nfe, tau, denoising):
 
 
 def main():
+    print("Starting main function")
     inputs: list = [
         gr.Audio(type="filepath", label="Input Audio"),
         gr.Dropdown(choices=["Midpoint", "RK4", "Euler"], value="Midpoint", label="CFM ODE Solver"),
@@ -38,12 +41,14 @@ def main():
         gr.Slider(minimum=0, maximum=1, value=0.5, step=0.01, label="CFM Prior Temperature"),
         gr.Checkbox(value=False, label="Denoise Before Enhancement"),
     ]
+    print("Inputs created")
 
     outputs: list = [
         gr.Audio(label="Output Denoised Audio"),
         gr.Audio(label="Output Enhanced Audio"),
     ]
 
+    print("Creating Gradio Interface")
     interface = gr.Interface(
         fn=_fn,
         title="Resemble Enhance",
@@ -51,8 +56,9 @@ def main():
         inputs=inputs,
         outputs=outputs,
     )
-
+    print("Launching Gradio Interface")
     interface.launch()
+    print("Gradio Interface Launched")
 
 
 if __name__ == "__main__":
